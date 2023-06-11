@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { auth } from '../../firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
 
 interface isLoginProps {
   isSignUp: boolean;
@@ -14,6 +18,7 @@ export default function AccountForm({ isSignUp }: isLoginProps) {
   });
 
   const { email, password, nickName } = inputValue;
+  const navigate = useNavigate();
   let errorText = '';
 
   const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,6 +49,20 @@ export default function AccountForm({ isSignUp }: isLoginProps) {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const signIn = async () => {
+    signInWithEmailAndPassword(auth, email, password)
+      .then(userCredential => {
+        const user = userCredential.user;
+        if (user) {
+          navigate('/home');
+        }
+      })
+      .catch(error => {
+        const errorMessage = error.message;
+        alert(errorMessage);
+      });
   };
 
   return (
@@ -87,7 +106,10 @@ export default function AccountForm({ isSignUp }: isLoginProps) {
         <button
           className="btn w-11/12 mt-12"
           disabled={isDisabled()}
-          onClick={register}
+          onClick={e => {
+            e.preventDefault();
+            isSignUp ? register() : signIn();
+          }}
         >
           {isSignUp ? '회원가입하기' : '로그인하기'}
         </button>
