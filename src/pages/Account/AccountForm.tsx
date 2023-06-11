@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { auth } from '../../firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 interface isLoginProps {
   isSignUp: boolean;
@@ -33,6 +35,15 @@ export default function AccountForm({ isSignUp }: isLoginProps) {
     ) {
       return false;
     } else return true;
+  };
+
+  const register = async () => {
+    try {
+      const user = await createUserWithEmailAndPassword(auth, email, password);
+      console.log(user);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -73,7 +84,11 @@ export default function AccountForm({ isSignUp }: isLoginProps) {
         {errorText}
       </label>
       <div className="text-center">
-        <button className="btn w-11/12 mt-12" disabled={isDisabled()}>
+        <button
+          className="btn w-11/12 mt-12"
+          disabled={isDisabled()}
+          onClick={register}
+        >
           {isSignUp ? '회원가입하기' : '로그인하기'}
         </button>
       </div>
