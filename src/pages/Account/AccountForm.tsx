@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { auth } from '../../firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
 
 interface isLoginProps {
   isSignUp: boolean;
@@ -14,6 +15,7 @@ export default function AccountForm({ isSignUp }: isLoginProps) {
   });
 
   const { email, password, nickName } = inputValue;
+  const navigate = useNavigate();
   let errorText = '';
 
   const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,12 +40,18 @@ export default function AccountForm({ isSignUp }: isLoginProps) {
   };
 
   const register = async () => {
-    try {
-      const user = await createUserWithEmailAndPassword(auth, email, password);
-      console.log(user);
-    } catch (error) {
-      console.log(error);
-    }
+    createUserWithEmailAndPassword(auth, email, password)
+      .then(userCredential => {
+        const user = userCredential.user;
+        if (user) {
+          alert('가입ㅊㅋ');
+          navigate('/');
+        }
+      })
+      .catch(error => {
+        const errorMessage = error.message;
+        alert(errorMessage);
+      });
   };
 
   return (
@@ -59,7 +67,7 @@ export default function AccountForm({ isSignUp }: isLoginProps) {
 
       <label className="label pl-5">비밀번호</label>
       <input
-        type="text"
+        type="password"
         placeholder="비밀번호를 입력해주세요"
         className="input input-bordered w-full max-w-xs mb-5"
         autoComplete="off"
@@ -87,7 +95,10 @@ export default function AccountForm({ isSignUp }: isLoginProps) {
         <button
           className="btn w-11/12 mt-12"
           disabled={isDisabled()}
-          onClick={register}
+          onClick={e => {
+            e.preventDefault();
+            register();
+          }}
         >
           {isSignUp ? '회원가입하기' : '로그인하기'}
         </button>
