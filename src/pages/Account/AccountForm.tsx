@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { auth } from '../../firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 
 interface isLoginProps {
@@ -44,8 +47,22 @@ export default function AccountForm({ isSignUp }: isLoginProps) {
       .then(userCredential => {
         const user = userCredential.user;
         if (user) {
-          alert('가입ㅊㅋ');
+          alert('환영합니다.');
           navigate('/');
+        }
+      })
+      .catch(error => {
+        const errorMessage = error.message;
+        alert(errorMessage);
+      });
+  };
+
+  const signIn = async () => {
+    signInWithEmailAndPassword(auth, email, password)
+      .then(userCredential => {
+        const user = userCredential.user;
+        if (user) {
+          navigate('/home');
         }
       })
       .catch(error => {
@@ -97,7 +114,7 @@ export default function AccountForm({ isSignUp }: isLoginProps) {
           disabled={isDisabled()}
           onClick={e => {
             e.preventDefault();
-            register();
+            isSignUp ? register() : signIn();
           }}
         >
           {isSignUp ? '회원가입하기' : '로그인하기'}
