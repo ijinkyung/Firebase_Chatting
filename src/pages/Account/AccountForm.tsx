@@ -43,12 +43,18 @@ export default function AccountForm({ isSignUp }: isLoginProps) {
   };
 
   const register = async () => {
-    try {
-      const user = await createUserWithEmailAndPassword(auth, email, password);
-      console.log(user);
-    } catch (error) {
-      console.log(error);
-    }
+    createUserWithEmailAndPassword(auth, email, password)
+      .then(userCredential => {
+        const user = userCredential.user;
+        if (user) {
+          alert('환영합니다.');
+          navigate('/');
+        }
+      })
+      .catch(error => {
+        const errorMessage = error.message;
+        alert(errorMessage);
+      });
   };
 
   const signIn = async () => {
@@ -78,7 +84,7 @@ export default function AccountForm({ isSignUp }: isLoginProps) {
 
       <label className="label pl-5">비밀번호</label>
       <input
-        type="text"
+        type="password"
         placeholder="비밀번호를 입력해주세요"
         className="input input-bordered w-full max-w-xs mb-5"
         autoComplete="off"
