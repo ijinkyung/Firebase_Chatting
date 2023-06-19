@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 export default function ChattingRoom() {
   return (
     <div>
@@ -9,7 +11,9 @@ export default function ChattingRoom() {
               <h2 className="card-title">{title}</h2>
               <p>{sub}</p>
               <div className="card-actions justify-end">
-                <button className="btn bg-DarkBlue">참여하기</button>
+                <Link to={'/chatting'}>
+                  <button className="btn bg-DarkBlue">참여하기</button>
+                </Link>
               </div>
             </div>
           </div>

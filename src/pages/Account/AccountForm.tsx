@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { auth } from '../../firebase';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
+import { currentUser } from '../../recoil/userState';
 
 interface isLoginProps {
   isSignUp: boolean;
@@ -17,6 +19,7 @@ export default function AccountForm({ isSignUp }: isLoginProps) {
     nickName: '',
   });
 
+  const setUser = useSetRecoilState(currentUser);
   const { email, password, nickName } = inputValue;
   const navigate = useNavigate();
   let errorText = '';
@@ -62,6 +65,7 @@ export default function AccountForm({ isSignUp }: isLoginProps) {
       .then(userCredential => {
         const user = userCredential.user;
         if (user) {
+          setUser(user.email ?? '');
           navigate('/home');
         }
       })
