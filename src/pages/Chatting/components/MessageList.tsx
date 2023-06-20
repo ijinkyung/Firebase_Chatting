@@ -12,7 +12,6 @@ type MessageProps = {
 export default function MessageList() {
   const [messageList, setMessageList] = useState<MessageProps[]>([]);
   const [currentEmail] = useRecoilState(currentUser);
-  const [isCurrentUser, setIsCurrentUser] = useState(true);
 
   useEffect(() => {
     const starCountRef = ref(database);
@@ -23,7 +22,7 @@ export default function MessageList() {
   }, []);
 
   return (
-    <div className="w-full h-[490px] bg-LightBeige">
+    <div className="h-[450px] xl:h-[550px] px-2 overflow-scroll">
       {messageList.map((item, idx) => {
         const { username, message } = item;
 
@@ -36,10 +35,8 @@ export default function MessageList() {
                 : 'chat chat-start block'
             }`}
           >
-            <div key={idx} className="">
-              {username}
-            </div>
-            <div className="chat-bubble bg-DarkBlue text-black">{message}</div>
+            <div key={idx}>{username === currentEmail ? '' : username}</div>
+            <div className="chat-bubble">{message}</div>
           </div>
         );
       })}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { auth } from '../../firebase';
 import {
   createUserWithEmailAndPassword,
@@ -16,11 +16,10 @@ export default function AccountForm({ isSignUp }: isLoginProps) {
   const [inputValue, setInputValue] = useState({
     email: '',
     password: '',
-    nickName: '',
   });
 
   const setUser = useSetRecoilState(currentUser);
-  const { email, password, nickName } = inputValue;
+  const { email, password } = inputValue;
   const navigate = useNavigate();
   let errorText = '';
 
@@ -34,13 +33,7 @@ export default function AccountForm({ isSignUp }: isLoginProps) {
   };
 
   const isDisabled = () => {
-    if (
-      (isSignUp &&
-        email.includes('@') &&
-        password.length >= 8 &&
-        nickName.length >= 2) ||
-      (email.includes('@') && password.length >= 8)
-    ) {
+    if (email.includes('@') && password.length >= 8) {
       return false;
     } else return true;
   };
@@ -95,19 +88,6 @@ export default function AccountForm({ isSignUp }: isLoginProps) {
         name="password"
         onChange={changeHandler}
       />
-
-      {isSignUp && (
-        <>
-          <label className="label pl-5">이름</label>
-          <input
-            type="text"
-            placeholder="사용할 이름을 입력해주세요"
-            className="input input-bordered w-full max-w-xs"
-            name="nickName"
-            onChange={changeHandler}
-          />
-        </>
-      )}
 
       <label className="label-text-alt absolute left-5 top-[395px] text-red-500">
         {errorText}

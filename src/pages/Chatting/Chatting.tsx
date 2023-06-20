@@ -4,7 +4,7 @@ import MessageInput from './components/MessageInput';
 
 export default function Chatting() {
   return (
-    <div className="absolute top-24 w-[360px]">
+    <div className="rounded-lg">
       <ChattingRoomTitle />
       <MessageList />
       <MessageInput />

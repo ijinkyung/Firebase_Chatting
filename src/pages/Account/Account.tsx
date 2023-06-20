@@ -13,8 +13,8 @@ export default function Account() {
   }, [location]);
 
   return (
-    <div>
-      <h1 className="text-4xl text-center font-bold">
+    <div className="w-[360px] mx-auto">
+      <h1 className="text-4xl text-center font-bold mt-16">
         {isSignUp ? '회원가입' : '로그인'}
       </h1>
       <AccountForm isSignUp={isSignUp} />
