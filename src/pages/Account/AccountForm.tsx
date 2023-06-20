@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { auth } from '../../firebase';
 import {
   createUserWithEmailAndPassword,
@@ -10,9 +10,10 @@ import { currentUser } from '../../recoil/userState';
 
 interface isLoginProps {
   isSignUp: boolean;
+  setIsSignUp: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function AccountForm({ isSignUp }: isLoginProps) {
+export default function AccountForm({ isSignUp, setIsSignUp }: isLoginProps) {
   const [inputValue, setInputValue] = useState({
     email: '',
     password: '',
@@ -68,6 +69,16 @@ export default function AccountForm({ isSignUp }: isLoginProps) {
       });
   };
 
+  const clickHandler = () => {
+    if (isSignUp) {
+      navigate('/login');
+      setIsSignUp(false);
+    } else {
+      navigate('/signUp');
+      setIsSignUp(true);
+    }
+  };
+
   return (
     <form className="text-center mt-12">
       <label className="label pl-5">이메일</label>
@@ -94,7 +105,7 @@ export default function AccountForm({ isSignUp }: isLoginProps) {
       </label>
       <div className="text-center">
         <button
-          className="btn w-11/12 mt-12"
+          className="btn w-11/12 mt-12 mb-2"
           disabled={isDisabled()}
           onClick={e => {
             e.preventDefault();
@@ -103,6 +114,10 @@ export default function AccountForm({ isSignUp }: isLoginProps) {
         >
           {isSignUp ? '회원가입하기' : '로그인하기'}
         </button>
+
+        <p onClick={clickHandler} className="text-sm cursor-pointer">
+          {isSignUp ? '로그인하러 가기' : '회원가입하러 가기'}
+        </p>
       </div>
     </form>
   );

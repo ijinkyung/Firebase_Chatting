@@ -17,7 +17,7 @@ export default function Account() {
       <h1 className="text-4xl text-center font-bold mt-16">
         {isSignUp ? '회원가입' : '로그인'}
       </h1>
-      <AccountForm isSignUp={isSignUp} />
+      <AccountForm isSignUp={isSignUp} setIsSignUp={setIsSignUp} />
     </div>
   );
 }
