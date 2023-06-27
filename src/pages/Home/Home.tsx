@@ -5,15 +5,12 @@ import { collection, addDoc, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase';
 import Swal from 'sweetalert2';
 import { roomNum } from '../../recoil/chatRoomState';
-import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
   const setRoomId = useSetRecoilState(roomNum);
   const [roomInfo, setRoomInfo] = useState<
     { roomTitle: string; docId: string }[]
   >([]);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -26,7 +23,7 @@ export default function Home() {
     };
 
     fetchMessages();
-  }, []);
+  }, [roomInfo]);
 
   const submitHandler = (roomValue: string) => {
     try {
@@ -55,7 +52,6 @@ export default function Home() {
       if (result.isConfirmed) {
         const roomValue = result.value;
         submitHandler(roomValue);
-        // navigate(`chatting/${roomInfo.docsId}`);
       }
     });
   };
