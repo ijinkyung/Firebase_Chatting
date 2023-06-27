@@ -2,6 +2,8 @@ import { initializeApp } from 'firebase/app';
 import { getAnalytics } from 'firebase/analytics';
 import { getAuth } from 'firebase/auth';
 import { getDatabase } from 'firebase/database';
+import 'firebase/firestore';
+import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FB_API_KEY,
@@ -11,12 +13,13 @@ const firebaseConfig = {
   messagingSenderId: process.env.REACT_APP_FB_MESSAGING_SENDER_ID,
   appId: process.env.REACT_APP_FB_API_ID,
   measurementId: process.env.REACT_APP_FB_MEASUREMENTID,
-  databaseUrl: 'https://fir-a314f-default-rtdb.firebaseio.com/',
+  databaseURL: 'https://fir-a314f-default-rtdb.firebaseio.com/',
 };
 
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth();
 const database = getDatabase(app);
+const db = getFirestore(app);
 
-export { app, analytics, auth, database };
+export { app, analytics, auth, database, db };

@@ -4,6 +4,7 @@ import { database } from '../../../firebase';
 import { useRecoilState } from 'recoil';
 import { currentUser } from '../../../recoil/userState';
 import { AiFillPlusCircle } from 'react-icons/ai';
+import { data } from 'autoprefixer';
 
 export default function MessageInput() {
   const [input, setInput] = useState('');
@@ -17,10 +18,13 @@ export default function MessageInput() {
     e.preventDefault();
     setInput('');
 
-    set(ref(database), {
-      username: userEmail,
-      message: input,
-    });
+    // set(ref(database), {
+    //   username: userEmail,
+    //   message: input,
+    // });
+
+    // database.collection('messages');
+    // const chatRef = firestore.collection('messages');
   };
 
   return (
