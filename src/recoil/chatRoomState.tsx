@@ -14,3 +14,9 @@ export const roomTitleStr = atom({
   default: '',
   effects_UNSTABLE: [persistAtom],
 });
+
+export const docsNum = atom({
+  key: 'docsNum',
+  default: 0,
+  effects_UNSTABLE: [persistAtom],
+});

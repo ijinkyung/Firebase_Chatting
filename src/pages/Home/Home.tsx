@@ -4,19 +4,25 @@ import { db } from '../../firebase';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { useRecoilState } from 'recoil';
-import { roomNum } from '../../recoil/chatRoomState';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { docsNum, roomNum } from '../../recoil/chatRoomState';
 
 export default function Home() {
   const [roomId, setRoomId] = useRecoilState(roomNum);
-  const [roomTitles, setRoomTitles] = useState<string[]>([]);
+  const [roomInfo, setRoomInfo] = useState<
+    { roomTitle: string; docId: string }[]
+  >([]);
+
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMessages = async () => {
       const querySnapshot = await getDocs(collection(db, 'messages'));
-      const roomTitles = querySnapshot.docs.map(doc => doc.data().roomTitle);
-      setRoomTitles(roomTitles);
+      const newRoomInfo = querySnapshot.docs.map(doc => ({
+        roomTitle: doc.data().roomTitle,
+        docId: doc.id,
+      }));
+      setRoomInfo(newRoomInfo);
     };
 
     fetchMessages();
@@ -56,9 +62,18 @@ export default function Home() {
 
   return (
     <div className="p-3">
-      {roomTitles.map((title: string, idx: number) => {
-        return <ChattingRoom key={idx} title={title} idx={idx} />;
-      })}
+      {roomInfo.map(
+        (room: { roomTitle: string; docId: string }, idx: number) => {
+          return (
+            <ChattingRoom
+              key={idx}
+              docId={room.docId}
+              roomTitle={room.roomTitle}
+              idx={idx}
+            />
+          );
+        }
+      )}
 
       <div className="w-full m-auto">
         <button onClick={newChatRoom} className="btn btn-neutral w-full">

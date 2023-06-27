@@ -1,14 +1,23 @@
 import { useState } from 'react';
-import { set, ref } from 'firebase/database';
-import { database } from '../../../firebase';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { currentUser } from '../../../recoil/userState';
 import { AiFillPlusCircle } from 'react-icons/ai';
-import { data } from 'autoprefixer';
+import { db } from '../../../firebase';
+import { doc, updateDoc } from 'firebase/firestore';
+import { docsNum } from '../../../recoil/chatRoomState';
 
 export default function MessageInput() {
   const [input, setInput] = useState('');
+  const docsId = useRecoilValue(docsNum);
   const [userEmail] = useRecoilState(currentUser);
+
+  const docRef = doc(db, 'messages', docsId);
+
+  const updatedData = {
+    user: userEmail,
+    chat: input,
+    updatedAt: new Date(),
+  };
 
   const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
@@ -17,14 +26,11 @@ export default function MessageInput() {
   const sendHandler = (e: any) => {
     e.preventDefault();
     setInput('');
-
-    // set(ref(database), {
-    //   username: userEmail,
-    //   message: input,
-    // });
-
-    // database.collection('messages');
-    // const chatRef = firestore.collection('messages');
+    try {
+      updateDoc(docRef, updatedData);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
