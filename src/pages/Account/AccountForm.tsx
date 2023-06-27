@@ -1,23 +1,26 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { auth } from '../../firebase';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
+import { currentUser } from '../../recoil/userState';
 
 interface isLoginProps {
   isSignUp: boolean;
+  setIsSignUp: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function AccountForm({ isSignUp }: isLoginProps) {
+export default function AccountForm({ isSignUp, setIsSignUp }: isLoginProps) {
   const [inputValue, setInputValue] = useState({
     email: '',
     password: '',
-    nickName: '',
   });
 
-  const { email, password, nickName } = inputValue;
+  const setUser = useSetRecoilState(currentUser);
+  const { email, password } = inputValue;
   const navigate = useNavigate();
   let errorText = '';
 
@@ -31,13 +34,7 @@ export default function AccountForm({ isSignUp }: isLoginProps) {
   };
 
   const isDisabled = () => {
-    if (
-      (isSignUp &&
-        email.includes('@') &&
-        password.length >= 8 &&
-        nickName.length >= 2) ||
-      (email.includes('@') && password.length >= 8)
-    ) {
+    if (email.includes('@') && password.length >= 8) {
       return false;
     } else return true;
   };
@@ -62,6 +59,7 @@ export default function AccountForm({ isSignUp }: isLoginProps) {
       .then(userCredential => {
         const user = userCredential.user;
         if (user) {
+          setUser(user.email ?? '');
           navigate('/home');
         }
       })
@@ -69,6 +67,16 @@ export default function AccountForm({ isSignUp }: isLoginProps) {
         const errorMessage = error.message;
         alert(errorMessage);
       });
+  };
+
+  const clickHandler = () => {
+    if (isSignUp) {
+      navigate('/login');
+      setIsSignUp(false);
+    } else {
+      navigate('/signUp');
+      setIsSignUp(true);
+    }
   };
 
   return (
@@ -92,25 +100,12 @@ export default function AccountForm({ isSignUp }: isLoginProps) {
         onChange={changeHandler}
       />
 
-      {isSignUp && (
-        <>
-          <label className="label pl-5">이름</label>
-          <input
-            type="text"
-            placeholder="사용할 이름을 입력해주세요"
-            className="input input-bordered w-full max-w-xs"
-            name="nickName"
-            onChange={changeHandler}
-          />
-        </>
-      )}
-
       <label className="label-text-alt absolute left-5 top-[395px] text-red-500">
         {errorText}
       </label>
       <div className="text-center">
         <button
-          className="btn w-11/12 mt-12"
+          className="btn w-11/12 mt-12 mb-2"
           disabled={isDisabled()}
           onClick={e => {
             e.preventDefault();
@@ -119,6 +114,10 @@ export default function AccountForm({ isSignUp }: isLoginProps) {
         >
           {isSignUp ? '회원가입하기' : '로그인하기'}
         </button>
+
+        <p onClick={clickHandler} className="text-sm cursor-pointer">
+          {isSignUp ? '로그인하러 가기' : '회원가입하러 가기'}
+        </p>
       </div>
     </form>
   );

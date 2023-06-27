@@ -1,38 +1,39 @@
-export default function ChattingRoom() {
+import { useNavigate } from 'react-router-dom';
+import { useRecoilState, useSetRecoilState } from 'recoil';
+import { roomNum, roomTitleStr } from '../../../recoil/chatRoomState';
+
+type ChattingRoomProps = {
+  title: string;
+  idx: number;
+};
+
+export default function ChattingRoom({ title, idx }: ChattingRoomProps) {
+  const navigate = useNavigate();
+  const [roomId, setRoomId] = useRecoilState(roomNum);
+  const setRoomTitle = useSetRecoilState(roomTitleStr);
+
+  const clickHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const id = e.currentTarget.value;
+    setRoomId(id);
+    setRoomTitle(title);
+    navigate(`/chatting/${id}`);
+  };
+
   return (
     <div>
-      {CHATTINGROOMS.map(room => {
-        const { id, title, sub } = room;
-        return (
-          <div key={id} className="card w-full bg-base-100 shadow-xl mb-3">
-            <div className="card-body">
-              <h2 className="card-title">{title}</h2>
-              <p>{sub}</p>
-              <div className="card-actions justify-end">
-                <button className="btn bg-DarkBlue">참여하기</button>
-              </div>
+      <div className="card h-[150px] w-full bg-base-100 shadow-xl mb-3">
+        <div className="card-body">
+          <h2 className="card-title">{title}</h2>
+
+          <div className="card-actions justify-end">
+            <div className="w-[410px] ">
+              <button onClick={clickHandler} value={idx} className="btn w-full">
+                참여하기
+              </button>
             </div>
           </div>
-        );
-      })}
+        </div>
+      </div>
     </div>
   );
 }
-
-const CHATTINGROOMS = [
-  {
-    id: 1,
-    title: '강서구 강아지 산책 방',
-    sub: '강서구 강아지 산책 코스나 정보 공유해요 🐶',
-  },
-  {
-    id: 2,
-    title: '강서구 자취 정보 공유 방',
-    sub: '강서구 자취러분들 맛집이나 자취 꿀정보 공유해요',
-  },
-  {
-    id: 3,
-    title: '강서구 카페 사장님',
-    sub: '강서구에서 카페하시는 사장님들 모임',
-  },
-];

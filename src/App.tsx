@@ -1,3 +1,4 @@
+import { RecoilRoot } from 'recoil';
 import ConatainerWrap from './components/ConatainerWrap/ConatainerWrap';
 import Nav from './components/Nav/Nav';
 import './index.css';
@@ -7,9 +8,11 @@ function App() {
   return (
     <>
       <Nav />
-      <ConatainerWrap>
-        <Outlet />
-      </ConatainerWrap>
+      <RecoilRoot>
+        <ConatainerWrap>
+          <Outlet />
+        </ConatainerWrap>
+      </RecoilRoot>
     </>
   );
 }
