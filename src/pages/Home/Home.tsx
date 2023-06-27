@@ -1,26 +1,29 @@
+import { useEffect, useState } from 'react';
+import { useSetRecoilState } from 'recoil';
 import ChattingRoom from './components/ChattingRoom';
 import { collection, addDoc, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase';
 import Swal from 'sweetalert2';
-import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { useRecoilState } from 'recoil';
 import { roomNum } from '../../recoil/chatRoomState';
 
 export default function Home() {
-  const [roomId, setRoomId] = useRecoilState(roomNum);
-  const [roomTitles, setRoomTitles] = useState<string[]>([]);
-  const navigate = useNavigate();
+  const setRoomId = useSetRecoilState(roomNum);
+  const [roomInfo, setRoomInfo] = useState<
+    { roomTitle: string; docId: string }[]
+  >([]);
 
   useEffect(() => {
     const fetchMessages = async () => {
       const querySnapshot = await getDocs(collection(db, 'messages'));
-      const roomTitles = querySnapshot.docs.map(doc => doc.data().roomTitle);
-      setRoomTitles(roomTitles);
+      const newRoomInfo = querySnapshot.docs.map(doc => ({
+        roomTitle: doc.data().roomTitle,
+        docId: doc.id,
+      }));
+      setRoomInfo(newRoomInfo);
     };
 
     fetchMessages();
-  }, []);
+  }, [roomInfo]);
 
   const submitHandler = (roomValue: string) => {
     try {
@@ -49,16 +52,24 @@ export default function Home() {
       if (result.isConfirmed) {
         const roomValue = result.value;
         submitHandler(roomValue);
-        navigate(`/chatting/${roomId}`);
       }
     });
   };
 
   return (
     <div className="p-3">
-      {roomTitles.map((title: string, idx: number) => {
-        return <ChattingRoom key={idx} title={title} idx={idx} />;
-      })}
+      {roomInfo.map(
+        (room: { roomTitle: string; docId: string }, idx: number) => {
+          return (
+            <ChattingRoom
+              key={idx}
+              docId={room.docId}
+              roomTitle={room.roomTitle}
+              idx={idx}
+            />
+          );
+        }
+      )}
 
       <div className="w-full m-auto">
         <button onClick={newChatRoom} className="btn btn-neutral w-full">

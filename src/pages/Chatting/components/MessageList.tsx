@@ -1,8 +1,9 @@
-import { ref, onValue } from 'firebase/database';
-import { database } from '../../../firebase';
+import { db } from '../../../firebase';
 import { useEffect, useState } from 'react';
 import { currentUser } from '../../../recoil/userState';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { docsNum } from '../../../recoil/chatRoomState';
 
 type MessageProps = {
   username: string;
@@ -12,13 +13,24 @@ type MessageProps = {
 export default function MessageList() {
   const [messageList, setMessageList] = useState<MessageProps[]>([]);
   const [currentEmail] = useRecoilState(currentUser);
+  const docsId = useRecoilValue(docsNum);
+
+  const documentRef = doc(db, 'messages', docsId);
 
   useEffect(() => {
-    const starCountRef = ref(database);
-    onValue(starCountRef, snapshot => {
-      const data = snapshot.val();
-      setMessageList(prevList => [...prevList, data]);
+    const unsubscribe = onSnapshot(documentRef, snapshot => {
+      if (snapshot.exists()) {
+        const data: MessageProps = {
+          username: snapshot.data().user,
+          message: snapshot.data().chat,
+        };
+        setMessageList(prevList => [...prevList, data]);
+      }
     });
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   return (

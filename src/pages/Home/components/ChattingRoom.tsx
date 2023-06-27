@@ -1,21 +1,28 @@
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState, useSetRecoilState } from 'recoil';
-import { roomNum, roomTitleStr } from '../../../recoil/chatRoomState';
+import { useSetRecoilState } from 'recoil';
+import { docsNum, roomNum, roomTitleStr } from '../../../recoil/chatRoomState';
 
 type ChattingRoomProps = {
-  title: string;
+  roomTitle: string;
+  docId: string;
   idx: number;
 };
 
-export default function ChattingRoom({ title, idx }: ChattingRoomProps) {
+export default function ChattingRoom({
+  roomTitle,
+  docId,
+  idx,
+}: ChattingRoomProps) {
   const navigate = useNavigate();
-  const [roomId, setRoomId] = useRecoilState(roomNum);
+  const setRoomId = useSetRecoilState(roomNum);
+  const setDocsId = useSetRecoilState(docsNum);
   const setRoomTitle = useSetRecoilState(roomTitleStr);
 
   const clickHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
     const id = e.currentTarget.value;
     setRoomId(id);
-    setRoomTitle(title);
+    setRoomTitle(roomTitle);
+    setDocsId(e.currentTarget.name);
     navigate(`/chatting/${id}`);
   };
 
@@ -23,11 +30,16 @@ export default function ChattingRoom({ title, idx }: ChattingRoomProps) {
     <div>
       <div className="card h-[150px] w-full bg-base-100 shadow-xl mb-3">
         <div className="card-body">
-          <h2 className="card-title">{title}</h2>
+          <h2 className="card-title">{roomTitle}</h2>
 
           <div className="card-actions justify-end">
             <div className="w-[410px] ">
-              <button onClick={clickHandler} value={idx} className="btn w-full">
+              <button
+                onClick={clickHandler}
+                value={idx}
+                name={docId}
+                className="btn w-full"
+              >
                 참여하기
               </button>
             </div>
