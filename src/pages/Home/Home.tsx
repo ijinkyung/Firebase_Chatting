@@ -1,14 +1,14 @@
+import { useEffect, useState } from 'react';
+import { useSetRecoilState } from 'recoil';
 import ChattingRoom from './components/ChattingRoom';
 import { collection, addDoc, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase';
 import Swal from 'sweetalert2';
+import { roomNum } from '../../recoil/chatRoomState';
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { useRecoilState, useSetRecoilState } from 'recoil';
-import { docsNum, roomNum } from '../../recoil/chatRoomState';
 
 export default function Home() {
-  const [roomId, setRoomId] = useRecoilState(roomNum);
+  const setRoomId = useSetRecoilState(roomNum);
   const [roomInfo, setRoomInfo] = useState<
     { roomTitle: string; docId: string }[]
   >([]);
@@ -55,7 +55,7 @@ export default function Home() {
       if (result.isConfirmed) {
         const roomValue = result.value;
         submitHandler(roomValue);
-        navigate(`/chatting/${roomId}`);
+        // navigate(`chatting/${roomInfo.docsId}`);
       }
     });
   };
