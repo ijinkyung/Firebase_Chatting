@@ -20,3 +20,8 @@ export const docsNum = atom({
   default: 0,
   effects_UNSTABLE: [persistAtom],
 });
+
+export const modalState = atom({
+  key: 'modalState',
+  default: false,
+});

@@ -4,7 +4,7 @@ import MessageInput from './components/MessageInput';
 
 export default function Chatting() {
   return (
-    <div className="rounded-lg">
+    <div className="rounded-lg relative">
       <ChattingRoomTitle />
       <MessageList />
       <MessageInput />

@@ -8,13 +8,13 @@ import { docsNum } from '../../../recoil/chatRoomState';
 type MessageProps = {
   username: string;
   message: string;
+  image: string;
 };
 
 export default function MessageList() {
   const [messageList, setMessageList] = useState<MessageProps[]>([]);
   const [currentEmail] = useRecoilState(currentUser);
   const docsId = useRecoilValue(docsNum);
-
   const documentRef = doc(db, 'messages', docsId);
 
   useEffect(() => {
@@ -23,7 +23,9 @@ export default function MessageList() {
         const data: MessageProps = {
           username: snapshot.data().user,
           message: snapshot.data().chat,
+          image: snapshot.data().image,
         };
+
         setMessageList(prevList => [...prevList, data]);
       }
     });
@@ -36,7 +38,7 @@ export default function MessageList() {
   return (
     <div className="h-[450px] xl:h-[550px] px-2 overflow-scroll">
       {messageList.map((item, idx) => {
-        const { username, message } = item;
+        const { username, message, image } = item;
 
         return (
           <div
@@ -48,7 +50,17 @@ export default function MessageList() {
             }`}
           >
             <div key={idx}>{username === currentEmail ? '' : username}</div>
-            <div className="chat-bubble">{message}</div>
+            {image ? (
+              <div className="w-48 rounded-lg border-2 border-solid border-black">
+                <img
+                  alt="img"
+                  className="w-full h-fit rounded-lg"
+                  src={image}
+                />
+              </div>
+            ) : (
+              <div className="chat-bubble">{message}</div>
+            )}
           </div>
         );
       })}

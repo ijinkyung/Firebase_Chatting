@@ -13,7 +13,7 @@ export default function ChattingRoomTitle() {
         {roomTitle}
       </div>
 
-      <div className="absolute top-[100px] pl-3 cursor-pointer">
+      <div className="absolute top-[25px] pl-3 cursor-pointer">
         <BiLeftArrow onClick={() => navigate(-1)} className="w-6 h-6" />
       </div>
     </>
