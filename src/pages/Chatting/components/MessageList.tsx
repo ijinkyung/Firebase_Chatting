@@ -4,6 +4,8 @@ import { currentUser } from '../../../recoil/userState';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { docsNum } from '../../../recoil/chatRoomState';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
 
 type MessageProps = {
   username: string;
@@ -16,6 +18,7 @@ export default function MessageList() {
   const [currentEmail] = useRecoilState(currentUser);
   const docsId = useRecoilValue(docsNum);
   const documentRef = doc(db, 'messages', docsId);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = onSnapshot(documentRef, snapshot => {
@@ -28,6 +31,14 @@ export default function MessageList() {
 
         setMessageList(prevList => [...prevList, data]);
       }
+
+      const auth = getAuth();
+      onAuthStateChanged(auth, user => {
+        if (!user) {
+          alert('로그인을 먼저 진행해주세요');
+          navigate('/login');
+        }
+      });
     });
 
     return () => {

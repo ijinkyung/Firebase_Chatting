@@ -2,15 +2,18 @@ import { useEffect, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import ChattingRoom from './components/ChattingRoom';
 import { collection, addDoc, getDocs } from 'firebase/firestore';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { db } from '../../firebase';
 import Swal from 'sweetalert2';
 import { roomNum } from '../../recoil/chatRoomState';
+import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
   const setRoomId = useSetRecoilState(roomNum);
   const [roomInfo, setRoomInfo] = useState<
     { roomTitle: string; docId: string }[]
   >([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -23,6 +26,16 @@ export default function Home() {
     };
 
     fetchMessages();
+
+    const auth = getAuth();
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        localStorage.setItem('token', user.uid);
+      } else {
+        alert('로그인을 먼저 진행해주세요');
+        navigate('/login');
+      }
+    });
   }, [roomInfo]);
 
   const submitHandler = (roomValue: string) => {
